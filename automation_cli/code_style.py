@@ -1,13 +1,13 @@
+from pathlib import Path
 from typing import List
 import typer
 from automation_db.models import CodeStyle
 from automation_db.crud import CodeStyleCRUD
-from automation_db.config import DbConfig
 
 
-def code_style_app(config: DbConfig) -> typer.Typer:
+def code_style_app(db_path: Path) -> typer.Typer:
     app = typer.Typer()
-    crud = CodeStyleCRUD(config.code_style)
+    crud = CodeStyleCRUD(db_path)
 
     def create(reqs: List[str]) -> None:
         code_style = CodeStyle(requirements=reqs)

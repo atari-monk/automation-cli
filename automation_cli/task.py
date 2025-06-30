@@ -1,31 +1,29 @@
+from pathlib import Path
 from typing import List, Optional
 import typer
 from automation_db.models import Task
 from automation_db.crud import TaskCRUD
-from automation_db.config import DbConfig
 
 
-def task_app(config: DbConfig) -> typer.Typer:
+def task_app(db_path: Path) -> typer.Typer:
     app = typer.Typer()
-    crud = TaskCRUD(config.task)
+    crud = TaskCRUD(db_path)
 
     def create_task(
-        feature: str = typer.Argument(...),
         name: str = typer.Argument(...),
-        assigned_to: str = typer.Argument(...),
-        save_file: int = typer.Argument(...),
         reqs: List[str] = typer.Option([], "--reqs"),
-        files: List[int] = typer.Option([], "--files"),
-        status: str = typer.Option("pending", "--status")
+        files: List[Path] = typer.Option([], "--files"),
+        status: str = typer.Option("pending", "--status"),
+        feature: str = typer.Argument(...),
+        agent: str = typer.Argument(...),
     ) -> None:
         task = Task(
-            feature=feature,
             name=name,
             requirements=reqs,
-            context_files=files,
-            save_file=save_file,
-            assigned_to=assigned_to,
-            status=status
+            files=files,
+            status=status,
+            feature=feature,
+            agent=agent,
         )
         created = crud.create(task)
         if created:
@@ -40,12 +38,11 @@ def task_app(config: DbConfig) -> typer.Typer:
             return
         for task in tasks:
             typer.echo(f"\nTask: {task.name}")
-            typer.echo(f"Feature: {task.feature}")
-            typer.echo(f"Status: {task.status}")
-            typer.echo(f"Assigned to: {task.assigned_to}")
             typer.echo(f"Requirements: {', '.join(task.requirements)}")
-            typer.echo(f"Files: {', '.join(map(str, task.context_files))}")
-            typer.echo(f"Save File: {task.save_file}")
+            typer.echo(f"Files: {', '.join(map(str, task.files))}")
+            typer.echo(f"Status: {task.status}")
+            typer.echo(f"Feature: {task.feature}")
+            typer.echo(f"Agent: {task.agent}")
 
     def get_task(
         feature: str = typer.Argument(...),
@@ -54,12 +51,11 @@ def task_app(config: DbConfig) -> typer.Typer:
         task = crud.read_by_feature_and_name(feature, name)
         if task:
             typer.echo(f"\nTask: {task.name}")
-            typer.echo(f"Status: {task.status}")
-            typer.echo(f"Assigned to: {task.assigned_to}")
             typer.echo(f"Requirements: {', '.join(task.requirements)}")
-            typer.echo(f"Files: {', '.join(map(str, task.context_files))}")
-            typer.echo(f"Save File: {task.save_file}")
+            typer.echo(f"Files: {', '.join(map(str, task.files))}")
+            typer.echo(f"Status: {task.status}")
             typer.echo(f"Feature: {task.feature}\n")
+            typer.echo(f"Agent: {task.agent}")
         else:
             typer.echo(f"Task '{name}' not found in feature '{feature}'", err=True)
 
@@ -81,7 +77,7 @@ def task_app(config: DbConfig) -> typer.Typer:
         assigned_to: Optional[str] = typer.Option(None, "--assigned_to"),
         status: Optional[str] = typer.Option(None, "--status")
     ) -> None:
-        updates = {}
+        updates: dict[str, str] = {}
         if new_feature:
             updates['feature'] = new_feature
         if new_name:

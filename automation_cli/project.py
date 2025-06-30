@@ -3,12 +3,11 @@ import typer
 from pathlib import Path
 from automation_db.models import Project
 from automation_db.crud import ProjectCRUD
-from automation_db.config import DbConfig
 
 
-def project_app(config: DbConfig) -> typer.Typer:
+def project_app(db_path: Path) -> typer.Typer:
     app = typer.Typer()
-    crud = ProjectCRUD(config.project)
+    crud = ProjectCRUD(db_path)
 
     def create_project(name: str, path: Path, deps: List[str] = [], reqs: List[str] = []) -> None:
         project = Project(name=name, path=path, dependencies=deps, requirements=reqs)
@@ -26,7 +25,7 @@ def project_app(config: DbConfig) -> typer.Typer:
             typer.echo("No project found")
 
     def update_project(name: Optional[str] = None, path: Optional[Path] = None) -> None:
-        updates = {}
+        updates: dict[str, object] = {}
         if name:
             updates['name'] = name
         if path:

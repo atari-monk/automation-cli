@@ -1,13 +1,13 @@
+from pathlib import Path
 from typing import List
 import typer
 from automation_db.models import Feature
 from automation_db.crud import FeatureCRUD
-from automation_db.config import DbConfig
 
 
-def feature_app(config: DbConfig) -> typer.Typer:
+def feature_app(db_path: Path) -> typer.Typer:
     app = typer.Typer()
-    crud = FeatureCRUD(config.feature)
+    crud = FeatureCRUD(db_path)
 
     def create_feature(name: str, reqs: List[str]) -> None:
         feature = Feature(name=name, requirements=reqs)
@@ -42,8 +42,8 @@ def feature_app(config: DbConfig) -> typer.Typer:
         else:
             typer.echo(f"Failed to remove feature '{name}'. It may not exist.", err=True)
 
-    def update_feature(name: str, new_name: str = None) -> None:
-        updates = {}
+    def update_feature(name: str, new_name: str = None) -> None: # type: ignore
+        updates: dict[str, str] = {}
         if new_name:
             updates['name'] = new_name
         if not updates:

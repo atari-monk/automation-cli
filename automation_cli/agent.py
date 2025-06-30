@@ -1,13 +1,13 @@
+from pathlib import Path
 from typing import List
 import typer
 from automation_db.models import Agent
 from automation_db.crud import AgentCRUD
-from automation_db.config import DbConfig
 
 
-def agent_app(config: DbConfig) -> typer.Typer:
+def agent_app(db_path: Path) -> typer.Typer:
     app = typer.Typer()
-    crud = AgentCRUD(config.agent)
+    crud = AgentCRUD(db_path)
 
     def create(role: str, reqs: List[str]) -> None:
         """Create a new agent"""
