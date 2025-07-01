@@ -1,5 +1,0 @@
-[paths]
-selected = "race_game"
-
-[paths.available]
-race_game = "C:/atari-monk/code/arcade/race-game/automation_db"

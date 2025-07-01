@@ -13,6 +13,7 @@ def agent_app(db_path: Path) -> typer.Typer:
         """Create a new agent"""
         agent = Agent(role=role, requirements=reqs)
         crud.create(agent)
+        typer.echo(f"Created agent '{role}'")
 
     def list() -> None:
         """List all agents"""

@@ -24,7 +24,7 @@ def create_app(shared_db_path: Path, project_db_path: Path) -> typer.Typer:
 
 def main():
     try:
-        config_path = Path(r"C:\atari-monk\code\cli\automation-cli\automation_cli\config.toml")
+        config_path = Path(r"C:\atari-monk\code\docs\apps-data-store\automation_cli_config.toml")
         shared_path, project_path = get_db_paths(config_path)
         shared_path.mkdir(parents=True, exist_ok=True)
         project_path.mkdir(parents=True, exist_ok=True)

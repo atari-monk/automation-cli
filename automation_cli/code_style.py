@@ -11,11 +11,8 @@ def code_style_app(db_path: Path) -> typer.Typer:
 
     def create(reqs: List[str]) -> None:
         code_style = CodeStyle(requirements=reqs)
-        created = crud.create(code_style)
-        if created:
-            typer.echo("Successfully created code style configuration.")
-        else:
-            typer.echo("Failed to create code style configuration.", err=True)
+        crud.create(code_style)
+        typer.echo("Created code style configuration.")
 
     def read() -> None:
         code_style = crud.read()
