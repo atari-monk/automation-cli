@@ -9,12 +9,12 @@ def project_app(db_path: Path) -> typer.Typer:
     app = typer.Typer()
     crud = ProjectCRUD(db_path)
 
-    def create_project(name: str, path: Path, deps: List[str] = [], reqs: List[str] = []) -> None:
+    def create(name: str, path: Path, deps: List[str] = [], reqs: List[str] = []) -> None:
         project = Project(name=name, path=path, dependencies=deps, requirements=reqs)
         crud.create(project)
         typer.echo(f"Created project '{name}' at {path}")
 
-    def read_project() -> None:
+    def read() -> None:
         project = crud.read()
         if project:
             typer.echo(f"\nProject: {project.name}")
@@ -24,7 +24,7 @@ def project_app(db_path: Path) -> typer.Typer:
         else:
             typer.echo("No project found")
 
-    def update_project(name: Optional[str] = None, path: Optional[Path] = None) -> None:
+    def update(name: Optional[str] = None, path: Optional[Path] = None) -> None:
         updates: dict[str, object] = {}
         if name:
             updates['name'] = name
@@ -36,41 +36,41 @@ def project_app(db_path: Path) -> typer.Typer:
         else:
             typer.echo("Failed to update project", err=True)
 
-    def add_dependency(dependency: str) -> None:
+    def add_dep(dependency: str) -> None:
         crud.add_dependency(dependency)
         typer.echo(f"Added dependency {dependency}")
 
-    def remove_dependency(dependency: str) -> None:
+    def remove_dep(dependency: str) -> None:
         crud.remove_dependency(dependency)
         typer.echo(f"Removed dependency {dependency}")
 
-    def update_dependency(old: str, new: str) -> None:
+    def update_dep(old: str, new: str) -> None:
         crud.update_dependency(old, new)
         typer.echo(f"Updated dependency from {old} to {new}")
 
-    def add_requirement(requirement: str) -> None:
+    def add_req(requirement: str) -> None:
         crud.add_requirement(requirement)
         typer.echo(f"Added requirement: {requirement}")
 
-    def remove_requirement(requirement: str) -> None:
+    def remove_req(requirement: str) -> None:
         crud.remove_requirement(requirement)
         typer.echo(f"Removed requirement: {requirement}")
 
-    def update_requirement(old: str, new: str) -> None:
+    def update_req(old: str, new: str) -> None:
         updated = crud.update_requirement(old, new)
         if updated:
             typer.echo(f"Updated requirement from '{old}' to '{new}'")
         else:
             typer.echo(f"Failed to update requirement '{old}'", err=True)
 
-    app.command()(create_project)
-    app.command()(read_project)
-    app.command()(update_project)
-    app.command()(add_dependency)
-    app.command()(remove_dependency)
-    app.command()(update_dependency)
-    app.command()(add_requirement)
-    app.command()(remove_requirement)
-    app.command()(update_requirement)
+    app.command()(create)
+    app.command()(read)
+    app.command()(update)
+    app.command()(add_dep)
+    app.command()(remove_dep)
+    app.command()(update_dep)
+    app.command()(add_req)
+    app.command()(remove_req)
+    app.command()(update_req)
 
     return app
